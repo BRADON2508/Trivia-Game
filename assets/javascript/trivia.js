@@ -17,11 +17,11 @@ var questions = [{
 }, {
   question: "What is Hideo Kojima known for?",
   choices: ["Metal Gear", "Ninja Gaiden", "Tokimeki Memorial", "All of the Above"],
-  correctAnswer: 
+  correctAnswer: 0
 }];
 
 var currentQuestion = 0;
-var correctAnswers = 0;
+var correctAnswer = 0;
 var quizOver = false;
 
 
@@ -44,18 +44,29 @@ function displayCurrentQuestion() {
   var choice;
   for (i = 0; i < numChoices; i++) {
       choice = questions[currentQuestion].choices[i];
-      
+      var html = "<li>" + choice + "</li>";
+      choiceList.append(html);
   }
+
+  //set correct answer
+  correctAnswer = questions[currentQuestion].correctAnswer;
+  
 }
 
 function resetQuiz() {
   currentQuestion = 0;
-  correctAnswers = 0;
+  correctAnswer = 0;
   hideScore();
 }
 
+function nextQuestion() {
+    currentQuestion++;
+    //re-start the timer
+    displayCurrentQuestion();
+  }
+
 function displayScore() {
-  $(document).find(".quizContainer > .result").text("You scored: " + correctAnswers + " out of: " + questions.length);
+  $(document).find(".quizContainer > .result").text("You scored: " + correctAnswer + " out of: " + questions.length);
   $(document).find(".quizContainer > .result").show();
 }
 
@@ -63,7 +74,7 @@ function hideScore() {
   $(document).find(".result").hide();
 }
 
-$(function(){
+// $(function(){
   var questionTimeout = null;
 
   function goNext($el) {
@@ -82,22 +93,44 @@ $(function(){
           }
       });
   }
+
   function afterLastQuestion(){
       alert("last question complete");
       $start.show();
   }
 
-  var $superContainer = $("#superContainer").on('click', '.next', function() {
+  $("#choiceList").on("click","li",function(){
+     //check if correct answer
+     if($(this).text() === questions[currentQuestion].choices[correctAnswer])
+     {
+        console.log("correct");
+     }
+     else
+     {
+        console.log("incorrect");
+     }
+
+     //next question
+     nextQuestion();
+  })
+
+//   var $superContainer = 
+  $("#superContainer").on('click', '.next', function() {
       goNext($(this).closest('.slide-container'));
       return false;
   });
 
-  var $start = $("#start").on('click', function(){
-      $(this).hide();
-      $superContainer.find(".slide-container")
-          .eq(0).clone(true,true)
-          .prependTo(superContainer)
-          .find(".next").trigger('click');
-      return false;
+//   var $start = 
+  $("#start").on('click', function(){
+    //   $(this).hide();
+    //   $superContainer.find(".slide-container")
+    //       .eq(0).clone(true,true)
+    //       .prependTo(superContainer)
+    //       .find(".next").trigger('click');
+    //   return false;
+    $(".instructions").hide()
+    displayCurrentQuestion();
   });
-});
+
+
+// });
